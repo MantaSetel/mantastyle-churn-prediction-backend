@@ -4,7 +4,7 @@ start:
 	docker compose up --build
 
 shell:
-	docker exec -it mantastyle-telco-customer-churn-backend /bin/sh
+	docker compose run --rm --use-aliases web /bin/sh
 
 s:
 	make start
