@@ -10,3 +10,14 @@ services:
     ports:
       - "3000:3000"
     command: npm run dev
+
+  db:
+    image: mysql:8
+    container_name: mantastyle-telco-customer-churn-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mantastyle_telco_db
+      MYSQL_USER: root_user
+      MYSQL_PASSWORD: root_password
+    ports:
+      - "3306:3306"
