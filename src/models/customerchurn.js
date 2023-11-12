@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   CustomerChurn.init({
-    months: DataTypes.NUMBER,
+    tenure_months: DataTypes.NUMBER,
     location: DataTypes.STRING,
     device_class: DataTypes.STRING,
     games_product: DataTypes.STRING,
@@ -23,8 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     video_product: DataTypes.STRING,
     call_center: DataTypes.BOOLEAN,
     use_my_app: DataTypes.BOOLEAN,
+    monthly_purchase: DataTypes.NUMBER,
+    cltv: DataTypes.NUMBER,
     payment_method: DataTypes.STRING,
-    tenure_month: DataTypes.NUMBER,
     churn: DataTypes.BOOLEAN
   }, {
     sequelize,

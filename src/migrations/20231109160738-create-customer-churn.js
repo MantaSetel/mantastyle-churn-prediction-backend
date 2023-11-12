@@ -42,6 +42,9 @@ module.exports = {
       monthly_purchase: {
         type: Sequelize.BIGINT
       },
+      cltv: {
+        type: Sequelize.BIGINT
+      },
       churn: {
         type: Sequelize.BOOLEAN
       },
