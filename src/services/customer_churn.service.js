@@ -11,12 +11,12 @@ const predict = async (customerChurn) => {
     "UseMyApp": customerChurn.use_my_app,
     "MonthlyPurchase": customerChurn.monthly_purchase,
     "CLTV": customerChurn.cltv,
-    "DeviceClass_HighEnd": customerChurn.device_class === 'HighEnd' ? 1 : 0,
-    "DeviceClass_LowEnd": customerChurn.device_class === 'LowEnd' ? 1 : 0,
-    "DeviceClass_MidEnd": customerChurn.device_class === 'MidEnd' ? 1 : 0,
+    "DeviceClass_HighEnd": customerChurn.device_class === 'High End' ? 1 : 0,
+    "DeviceClass_LowEnd": customerChurn.device_class === 'Low End' ? 1 : 0,
+    "DeviceClass_MidEnd": customerChurn.device_class === 'Mid End' ? 1 : 0,
     "PaymentMethod_Credit": customerChurn.payment_method === 'Credit' ? 1 : 0,
     "PaymentMethod_Debit": customerChurn.payment_method === 'Debit' ? 1 : 0,
-    "PaymentMethod_DigitalWallet": customerChurn.payment_method === 'DigitalWallet' ? 1 : 0,
+    "PaymentMethod_DigitalWallet": customerChurn.payment_method === 'Digital Wallet' ? 1 : 0,
     "PaymentMethod_Pulsa": customerChurn.payment_method === 'Pulsa' ? 1 : 0
   }
   

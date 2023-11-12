@@ -31,13 +31,13 @@ module.exports = {
         type: Sequelize.ENUM("Yes", "No", "No internet service")
       },
       call_center: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.ENUM("Yes", "No")
       },
       use_my_app: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.ENUM("Yes", "No", "No internet service"),
       },
       payment_method: {
-        type: Sequelize.STRING
+        type: Sequelize.ENUM("Credit", "Debit", "Digital Wallet", "Pulsa")
       },
       monthly_purchase: {
         type: Sequelize.BIGINT
