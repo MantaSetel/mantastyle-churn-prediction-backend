@@ -1,16 +1,22 @@
 const fetch = require('node-fetch')
+const { CustomerChurn } = require('../models')
+
+const replaceValue = (value) => {
+  return value === 'Yes' ? 'Yes' : 'No'
+}
 
 const predict = async (customerChurn) => {
+  console.log("customerChurn", customerChurn)
   const customerChurnDataTransformed = {
-    "TenureMonths": customerChurn.tenure_months,
-    "GamesProduct": customerChurn.games_product,
-    "MusicProduct": customerChurn.music_product,
-    "EducationProduct": customerChurn.education_product,
-    "CallCenter": customerChurn.call_center,
-    "VideoProduct": customerChurn.video_product,
-    "UseMyApp": customerChurn.use_my_app,
-    "MonthlyPurchase": customerChurn.monthly_purchase,
-    "CLTV": customerChurn.cltv,
+    "TenureMonths": parseInt(customerChurn.tenure_months),
+    "GamesProduct": replaceValue(customerChurn.games_product),
+    "MusicProduct": replaceValue(customerChurn.music_product),
+    "EducationProduct": replaceValue(customerChurn.education_product),
+    "CallCenter": replaceValue(customerChurn.call_center),
+    "VideoProduct": replaceValue(customerChurn.video_product),
+    "UseMyApp": replaceValue(customerChurn.use_my_app),
+    "MonthlyPurchase": parseFloat(customerChurn.monthly_purchase),
+    "CLTV": parseFloat(customerChurn.cltv),
     "DeviceClass_HighEnd": customerChurn.device_class === 'High End' ? 1 : 0,
     "DeviceClass_LowEnd": customerChurn.device_class === 'Low End' ? 1 : 0,
     "DeviceClass_MidEnd": customerChurn.device_class === 'Mid End' ? 1 : 0,
@@ -28,14 +34,42 @@ const predict = async (customerChurn) => {
     }
   })
 
-  console.log("response", response)
   const data = await response.json()
-  console.log("result", data.churn[0])
   return data.churn[0]
 }
 
+const getDeviceClassCount = async () => {
+  const highEndCount = await CustomerChurn.count({ where: { device_class: 'High End' } })
+  const lowEndCount = await CustomerChurn.count({ where: { device_class: 'Low End' } })
+  const midEndCount = await CustomerChurn.count({ where: { device_class: 'Mid End' } })
+  return { highEndCount, lowEndCount, midEndCount }
+}
+
+const getChurnCount = async () => {
+  const churnCount = await CustomerChurn.count({ where: { churn: true } })
+  const notChurnCount = await CustomerChurn.count({ where: { churn: false } })
+  console.log("churnCount", churnCount)
+  console.log("churnCount", churnCount)
+  return { churnCount, notChurnCount }
+}
+
+const getMonthlyPurchasePerDevice = async () => {
+  const highEnd = await CustomerChurn.findAll({ where: { device_class: 'High End' } })
+  const lowEnd = await CustomerChurn.findAll({ where: { device_class: 'Low End' } })
+  const midEnd = await CustomerChurn.findAll({ where: { device_class: 'Mid End' } })
+
+  const highEndMonthlyPurchase = highEnd.reduce((counter, obj) => counter + obj.monthly_purchase, 0)
+  const lowEndMonthlyPurchase = lowEnd.reduce((counter, obj) => counter + obj.monthly_purchase, 0)
+  const midEndMonthlyPurchase = midEnd.reduce((counter, obj) => counter + obj.monthly_purchase, 0)
+
+  return { highEndMonthlyPurchase, lowEndMonthlyPurchase, midEndMonthlyPurchase }
+}
+
 const CustomerChurnService = {
-  predict
+  predict,
+  getDeviceClassCount,
+  getChurnCount,
+  getMonthlyPurchasePerDevice
 }
 
 module.exports = CustomerChurnService

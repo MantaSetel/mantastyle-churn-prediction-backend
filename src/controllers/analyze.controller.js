@@ -1,5 +1,5 @@
-const { CustomerChurn } = require('../models');
-const { CustomerChurnService } = require('../services')
+const { CustomerChurn } = require("../models");
+const { CustomerChurnService } = require("../services");
 
 // curl -X POST -H "Content-Type: application/json" -d '{
 //   "TenureMonths": 2,
@@ -21,35 +21,83 @@ const { CustomerChurnService } = require('../services')
 // }' https://aksihijau-production.et.r.appspot.com/customer-churn-predict
 
 const getPredictionHandler = async (req, res) => {
-  console.log(req.body)
-  const customerChurn = req.body;
-  try {
-    const churnResult = await CustomerChurnService.predict(customerChurn)
+    const customerChurn = req.body;
+    if (
+        !customerChurn.tenure_months ||
+        !customerChurn.location ||
+        !customerChurn.device_class ||
+        !customerChurn.games_product ||
+        !customerChurn.music_product ||
+        !customerChurn.education_product ||
+        !customerChurn.video_product ||
+        !customerChurn.call_center ||
+        !customerChurn.use_my_app ||
+        !customerChurn.payment_method ||
+        !customerChurn.monthly_purchase ||
+        !customerChurn.cltv
+    ) {
+        return res.status(400).send({ message: "All fields are required" });
+    }
 
-    const churn = await CustomerChurn.create({
-      tenure_month: customerChurn.tenure_months,
-      location: customerChurn.location,
-      device_class: customerChurn.device_class,
-      games_product: customerChurn.games_product,
-      music_product: customerChurn.music_product,
-      education_product: customerChurn.education_product,
-      video_product: customerChurn.video_product,
-      call_center: customerChurn.call_center,
-      use_my_app: customerChurn.use_my_app,
-      payment_method: customerChurn.payment_method,
-      monthly_purchase: customerChurn.monthly_purchase,
-      cltv: customerChurn.cltv,
-      churn: churnResult
-    });
+    try {
+        const churnResult = await CustomerChurnService.predict(customerChurn);
 
-    return res.status(201).send({ message: 'Success', data: churn });
-  } catch (error) {
-    return res.status(500).send({ message: error.message });
-  }
-}
+        const churn = await CustomerChurn.create({
+            tenure_month: customerChurn.tenure_months,
+            location: customerChurn.location,
+            device_class: customerChurn.device_class,
+            games_product: customerChurn.games_product,
+            music_product: customerChurn.music_product,
+            education_product: customerChurn.education_product,
+            video_product: customerChurn.video_product,
+            call_center: customerChurn.call_center,
+            use_my_app: customerChurn.use_my_app,
+            payment_method: customerChurn.payment_method,
+            monthly_purchase: customerChurn.monthly_purchase,
+            cltv: customerChurn.cltv,
+            churn: churnResult,
+        });
+
+        return res.status(201).send({ message: "Success", data: churn });
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+};
+
+const getDeviceClassHandler = async (req, res) => {
+    try {
+      const { highEndCount, midEndCount, lowEndCount } = await CustomerChurnService.getDeviceClassCount()
+      console.log(highEndCount, midEndCount, lowEndCount)
+      return res.status(200).send({ message: "Success", data: { highEndCount, midEndCount, lowEndCount } })
+    } catch (error) {
+      return res.status(500).send({ message: error.message })
+    }
+};
+
+const getChurnHandler = async (req, res) => {
+    try {
+      const { churnCount, notChurnCount } = await CustomerChurnService.getChurnCount()
+      return res.status(200).send({ message: "Success", data: { churnCount, notChurnCount } })
+    } catch (error) {
+      return res.status(500).send({ message: error.message })
+    }
+};
+
+const getMonthlyPurchasePerDeviceHandler = async (req, res) => {
+    try {
+      const { highEndMonthlyPurchase, lowEndMonthlyPurchase, midEndMonthlyPurchase } = await CustomerChurnService.getMonthlyPurchasePerDevice()
+
+      return res.status(200).send({ message: "Success", data: { highEndMonthlyPurchase, lowEndMonthlyPurchase, midEndMonthlyPurchase } })
+    } catch (error) {
+      return res.status(500).send({ message: error.message })
+    }
+};
 
 const AnalyzeController = {
-  getPredictionHandler
-}
+    getPredictionHandler,
+    getDeviceClassHandler,
+    getChurnHandler,
+    getMonthlyPurchasePerDeviceHandler
+};
 
-module.exports = AnalyzeController
+module.exports = AnalyzeController;
